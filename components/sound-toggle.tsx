@@ -3,34 +3,36 @@
 import { useState, useEffect } from "react"
 
 interface SoundToggleProps {
-    videoRef: React.RefObject<HTMLVideoElement>
+    vimeoPlayerRef: React.RefObject<any>
 }
 
-export function SoundToggle({ videoRef }: SoundToggleProps) {
+export function SoundToggle({ vimeoPlayerRef }: SoundToggleProps) {
     const [isMuted, setIsMuted] = useState(true)
 
     useEffect(() => {
-        // Initialize muted state from localStorage
-        const savedMutedState = localStorage.getItem("videoMuted")
+        // Initialize muted state - Vimeo starts muted by default
+        const savedMutedState = sessionStorage.getItem("videoMuted")
         if (savedMutedState !== null) {
             const mutedState = savedMutedState === "true"
             setIsMuted(mutedState)
-            if (videoRef.current) {
-                videoRef.current.muted = mutedState
+            if (vimeoPlayerRef.current) {
+                vimeoPlayerRef.current.setMuted(mutedState)
             }
         }
-    }, [videoRef])
+    }, [vimeoPlayerRef])
 
     const handleToggleSound = () => {
         const newMutedState = !isMuted
         setIsMuted(newMutedState)
-
-        if (videoRef.current) {
-            videoRef.current.muted = newMutedState
+        if (vimeoPlayerRef.current) {
+            vimeoPlayerRef.current.setMuted(newMutedState)
+            if (!newMutedState) {
+                // Set volume to a reasonable level when unmuting
+                vimeoPlayerRef.current.setVolume(0.5)
+            }
         }
-
-        // Persist to localStorage
-        localStorage.setItem("videoMuted", String(newMutedState))
+        // Persist to sessionStorage (using session instead of local to avoid localStorage issues)
+        sessionStorage.setItem("videoMuted", String(newMutedState))
     }
 
     return (

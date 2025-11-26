@@ -13,36 +13,33 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
-  const shaderContainerRef = useRef<HTMLVideoElement>(null)
+  const vimeoPlayerRef = useRef<any>(null)
   const scrollThrottleRef = useRef<number>()
 
   useEffect(() => {
-    const checkShaderReady = () => {
-      if (shaderContainerRef.current) {
-        const canvas = shaderContainerRef.current.querySelector("canvas")
-        if (canvas && canvas.width > 0 && canvas.height > 0) {
+    // Load Vimeo Player API
+    const script = document.createElement('script')
+    script.src = 'https://player.vimeo.com/api/player.js'
+    script.async = true
+    document.body.appendChild(script)
+
+    script.onload = () => {
+      const iframe = document.querySelector('#vimeo-background') as HTMLIFrameElement
+      if (iframe && (window as any).Vimeo) {
+        vimeoPlayerRef.current = new (window as any).Vimeo.Player(iframe)
+        vimeoPlayerRef.current.ready().then(() => {
           setIsLoaded(true)
-          return true
-        }
+        })
       }
-      return false
     }
-
-    if (checkShaderReady()) return
-
-    const intervalId = setInterval(() => {
-      if (checkShaderReady()) {
-        clearInterval(intervalId)
-      }
-    }, 100)
 
     const fallbackTimer = setTimeout(() => {
       setIsLoaded(true)
-    }, 1500)
+    }, 2000)
 
     return () => {
-      clearInterval(intervalId)
       clearTimeout(fallbackTimer)
+      document.body.removeChild(script)
     }
   }, [])
 
@@ -171,34 +168,36 @@ export default function Home() {
 
   return (
     <main className="relative h-screen w-full overflow-hidden bg-background">
-      <div className={`fixed inset-0 z-0 transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
-        <iframe
-          src="https://player.vimeo.com/video/1140933123?autoplay=1&muted=1&loop=1&background=1"
-          frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover", // ensures video fills screen without stretching
+      <div 
+        className={`fixed inset-0 z-0 overflow-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+      >
+        <iframe 
+          id="vimeo-background"
+          src="https://player.vimeo.com/video/1140933123?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1&amp;background=1&amp;controls=0" 
+          frameBorder="0" 
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+          referrerPolicy="strict-origin-when-cross-origin" 
+          style={{ 
+            position: "absolute", 
+            top: "50%", 
+            left: "50%", 
+            width: "100vw", 
+            height: "56.25vw",
+            minHeight: "100vh",
+            minWidth: "177.78vh",
+            transform: "translate(-50%, -50%)"
           }}
           title="background"
         />
-        <div className="absolute inset-0 bg-black/50" />
       </div>
+      <div className="absolute inset-0 z-0 bg-black/50" />
 
-
-
-      <SoundToggle videoRef={shaderContainerRef} />
+      <SoundToggle vimeoPlayerRef={vimeoPlayerRef} />
 
       <nav
         className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-3 transition-opacity duration-700 md:px-6 ${isLoaded ? "opacity-100" : "opacity-0"
           }`}
       >
-        {/* Logo left */}
         <button
           onClick={() => scrollToSection(0)}
           className="flex items-center gap-2 cursor-pointer"
@@ -208,15 +207,14 @@ export default function Home() {
           </div>
         </button>
 
-        {/* Desktop nav right */}
         <div className="hidden md:flex items-center gap-6">
           {["HOME", "WORK", "ABOUT", "CONTACT"].map((item, index) => (
             <button
               key={item}
               onClick={() => scrollToSection(index)}
               className={`group relative font-sans text-sm font-medium transition-colors ${currentSection === index
-                ? "text-foreground"
-                : "text-foreground/80 hover:text-foreground"
+                  ? "text-foreground"
+                  : "text-foreground/80 hover:text-foreground"
                 }`}
             >
               {item}
@@ -228,7 +226,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Mobile avatar right */}
         <img
           src="/me.jpg"
           alt="profile"
@@ -236,14 +233,12 @@ export default function Home() {
         />
       </nav>
 
-
       <div
         ref={scrollContainerRef}
         data-scroll-container
         className={`no-scrollbar relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"
           }`}
       >
-        {/* Hero Section */}
         <section className="flex min-h-screen w-screen shrink-0 flex-col justify-center px-6 md:px-12">
           <div className="max-w-3xl">
             <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-4 py-1.5 backdrop-blur-md duration-700">
