@@ -154,7 +154,7 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
                     target="_blank"
                     className={cn(
                       "flex flex-col items-center justify-center aspect-square p-2 rounded-sm text-center cursor-pointer",
-                      "border border-white/20 transition-colors duration-200 bg-white",
+                      "border border-white/50 transition-colors duration-200 bg-white/10",
                       "active:scale-95 group relative z-10"
                     )}
                     style={
@@ -173,8 +173,8 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
                     <div className="flex items-center justify-center mb-1 relative">
                       <item.icon
                         className={cn(
-                          "w-8 h-8 transition-colors duration-200",
-                          hoveredItem === i ? "text-(--item-color)" : "text-black/70"
+                          "w-7 h-7 transition-colors duration-200",
+                          hoveredItem === i ? "text-(--item-color)" : "text-white/70"
                         )}
                         style={{ ["--item-color" as any]: item.color } as CSSProperties}
                       />
@@ -182,8 +182,8 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
 
                     <h3
                       className={cn(
-                        "text-xs font-medium transition-colors line-clamp-1",
-                        hoveredItem === i ? "text-(--item-color)" : "text-black/70"
+                        "text-[11px] font-medium transition-colors line-clamp-1",
+                        hoveredItem === i ? "text-(--item-color)" : "text-white/70"
                       )}
                       style={{ ["--item-color" as any]: item.color } as CSSProperties}
                     >
