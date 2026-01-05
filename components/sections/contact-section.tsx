@@ -63,7 +63,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
@@ -152,7 +152,7 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
                     target="_blank"
                     className={cn(
                       "flex flex-col items-center justify-center aspect-square p-2 rounded-sm text-center cursor-pointer",
-                      "backdrop-blur-md border border-white/50 transition-colors duration-200 bg-white/5",
+                      "border border-white/50 transition-colors duration-200 bg-white/10",
                       "active:scale-95 group relative z-10"
                     )}
                     style={
@@ -216,7 +216,7 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
                     target="_blank"
                     className={cn(
                       "flex items-center gap-4 p-4 rounded-sm cursor-pointer",
-                      "backdrop-blur-md border border-white/50 transition-colors duration-200 bg-white/5",
+                      "border border-white/50 transition-colors duration-200 bg-white/10",
                       "group relative overflow-hidden"
                     )}
                     style={
