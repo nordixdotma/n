@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -9,6 +9,12 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 })
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nordix.ma"),
@@ -33,7 +39,7 @@ export const metadata: Metadata = {
     "Frontend Developer",
     "Backend Developer",
   ],
-  authors: [{ name: "Noureddine El Mhassani" }],
+  authors: [{ name: "Noureddine El Mhassani", url: "https://nordix.ma" }],
   creator: "Noureddine El Mhassani",
   publisher: "Noureddine El Mhassani",
   formatDetection: {
@@ -56,6 +62,12 @@ export const metadata: Metadata = {
         height: 630,
         alt: "Noureddine El Mhassani - Full Stack Developer",
       },
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Noureddine El Mhassani Logo",
+      },
     ],
   },
   twitter: {
@@ -64,7 +76,10 @@ export const metadata: Metadata = {
     description:
       "Experienced Full Stack Developer specializing in React, Next.js, Node.js, TypeScript and modern web technologies.",
     images: ["/home-preview.png"],
+    creator: "@nordixdotma",
   },
+  category: "technology",
+  classification: "Portfolio",
   robots: {
     index: true,
     follow: true,
@@ -78,9 +93,16 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code", // Replace with actual verification code
+  alternates: {
+    canonical: "/",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Noureddine Portfolio",
+  },
+  applicationName: "Noureddine El Mhassani Portfolio",
+  referrer: "origin-when-cross-origin",
 }
 
 export default function RootLayout({
@@ -88,11 +110,42 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Noureddine El Mhassani",
+    url: "https://nordix.ma",
+    jobTitle: "Full Stack Developer",
+    description: "Experienced Full Stack Developer specializing in React, Next.js, Node.js, TypeScript and modern web technologies.",
+    sameAs: [
+      "https://github.com/nordixdotma",
+      "https://linkedin.com/in/nordixdotma",
+      "https://x.com/nordixdotma",
+      "https://instagram.com/nordix.ma"
+    ]
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Noureddine El Mhassani Portfolio",
+    url: "https://nordix.ma",
+    description: "Portfolio of Noureddine El Mhassani, a Full Stack Developer & Software Engineer.",
+  };
+
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <link rel="icon" href="/logo.png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </head>
       <body className={`${inter.className} antialiased`}>
         {children}

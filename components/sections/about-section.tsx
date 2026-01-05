@@ -133,7 +133,10 @@ function AboutSectionComponent({ isMobile }: AboutSectionProps) {
                     {category.skills.map((skill, j) => (
                       <div
                         key={j}
-                        className="h-6 w-6 sm:h-8 sm:w-8 bg-contain bg-center bg-no-repeat"
+                        role="img"
+                        aria-label={skill}
+                        title={skill}
+                        className="h-6 w-6 sm:h-8 sm:w-8 bg-contain bg-center bg-no-repeat transition-transform hover:scale-110"
                         style={{
                           backgroundImage: `url(https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${skill}/${skill}-original.svg)`,
                         }}

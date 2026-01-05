@@ -95,7 +95,7 @@ function PostContent({
         <span>Pinned</span>
       </div>
       <div className="flex gap-3">
-        <Avatar className="hidden h-8 w-8 sm:flex">
+        <Avatar className="h-8 w-8 shrink-0">
           <AvatarImage src="/image.jpg" className="object-cover" />
           <AvatarFallback>N</AvatarFallback>
         </Avatar>
@@ -190,10 +190,10 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     setIsScrolled(scrollTop > 50)
   }
 
-  // Define content for each tab
+  // Define content for each tab - using famous CS-related YouTube videos
   const tabContent = {
     Home: {
-      video: "https://www.youtube.com/embed/dQw4w9WgXcQ?si=__example", // Placeholder
+      video: "https://www.youtube.com/embed/nKIu9yen5nc", // "What is Code?" - The Art of Code
       text: (
         <>
           <p>Welcome to my digital space! 🌐</p>
@@ -203,7 +203,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       stats: { replies: "25", reposts: "10", likes: "512", views: "2.3K" }
     },
     Projects: {
-      video: "https://www.youtube.com/embed/dQw4w9WgXcQ?si=__example", // Placeholder
+      video: "https://www.youtube.com/embed/Tn6-PIqc4UM", // Fireship - "React in 100 Seconds"
       text: (
         <>
           <p>Check out my latest detailed project breakdown! 🚀</p>
@@ -213,7 +213,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       stats: { replies: "14", reposts: "5", likes: "128", views: "1.2K" }
     },
     About: {
-      video: "https://www.youtube.com/embed/M7fi_IBsaNc?si=__example", // Placeholder
+      video: "https://www.youtube.com/embed/8jLOx1hD3_o", // CS50 - "Introduction to Computer Science"
       text: (
         <>
           <p>A little bit about my journey as a developer. 👨‍💻</p>
@@ -223,7 +223,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       stats: { replies: "8", reposts: "2", likes: "85", views: "940" }
     },
     Contact: {
-      video: "https://www.youtube.com/embed/LXb3EKWsInQ?si=__example", // Placeholder
+      video: "https://www.youtube.com/embed/ZXsQAXx_ao0", // Lex Fridman - "Elon Musk on AI"
       text: (
         <>
           <p>Let's connect and build something amazing together! 🤝</p>
@@ -234,11 +234,13 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     }
   }
 
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="p-0 overflow-y-auto max-h-[60vh] w-[95vw] sm:max-w-[400px] gap-0 border border-neutral-800 bg-black text-white rounded-sm shadow-2xl"
+        className="p-0 overflow-y-auto max-h-[70vh] w-[95vw] sm:w-[85vw] md:w-[70vw] lg:w-[50vw] max-w-2xl gap-0 border border-neutral-800 bg-black text-white rounded-sm shadow-2xl"
         onScroll={handleScroll}
+        showCloseButton={false}
       >
         <DialogTitle className="sr-only">Profile Details</DialogTitle>
         <div className="w-full pb-4 md:pb-0 relative min-h-[400px]">

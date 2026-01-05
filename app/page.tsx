@@ -224,7 +224,7 @@ export default function Home() {
           title="background"
         />
       </div>
-      <div className="absolute inset-0 z-0 bg-black/60" />
+      <div className="absolute inset-0 z-0 bg-black/50" />
 
       <SoundToggle vimeoPlayerRef={vimeoPlayerRef} />
 
