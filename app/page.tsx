@@ -1,20 +1,39 @@
 "use client"
 
-import { WorkSection } from "@/components/sections/work-section"
+import { WorkSection } from "@/components/sections/projects-section"
 import { AboutSection } from "@/components/sections/about-section"
 import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
 import { SoundToggle } from "@/components/sound-toggle"
+import Header from "@/components/header"
+import { AiAssistantButton } from "@/components/ai-assistant-button"
 import { useRef, useEffect, useState } from "react"
+import { HoverLinkPreview } from "@/components/ui/hover-link-preview"
+import { Download, Github } from "lucide-react"
+import Loader from "@/components/loader"
+
+const sectionIds = ["home", "projects", "about", "contact"]
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("down")
+  const [isMobile, setIsMobile] = useState(false)
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
   const vimeoPlayerRef = useRef<any>(null)
   const scrollThrottleRef = useRef<number>()
+  const lastSection = useRef(0)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useEffect(() => {
     // Load Vimeo Player API
@@ -50,8 +69,21 @@ export default function Home() {
         left: sectionWidth * index,
         behavior: "smooth",
       })
+      setScrollDirection(index > lastSection.current ? "down" : "up")
+      lastSection.current = index
       setCurrentSection(index)
     }
+  }
+
+  const handleSectionClick = (sectionId: string) => {
+    const index = sectionIds.indexOf(sectionId)
+    if (index !== -1) {
+      scrollToSection(index)
+    }
+  }
+
+  const handleLoaderComplete = () => {
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -112,6 +144,7 @@ export default function Home() {
         const sectionWidth = scrollContainerRef.current.offsetWidth
         const newSection = Math.round(scrollContainerRef.current.scrollLeft / sectionWidth)
         if (newSection !== currentSection) {
+          setScrollDirection(newSection > currentSection ? "down" : "up")
           setCurrentSection(newSection)
         }
       }
@@ -144,6 +177,7 @@ export default function Home() {
         const newSection = Math.round(scrollLeft / sectionWidth)
 
         if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
+          setScrollDirection(newSection > currentSection ? "down" : "up")
           setCurrentSection(newSection)
         }
 
@@ -168,20 +202,20 @@ export default function Home() {
 
   return (
     <main className="relative h-screen w-full overflow-hidden bg-background">
-      <div 
+      <div
         className={`fixed inset-0 z-0 overflow-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
-        <iframe 
+        <iframe
           id="vimeo-background"
-          src="https://player.vimeo.com/video/1140933123?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1&amp;background=1&amp;controls=0" 
-          frameBorder="0" 
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
-          referrerPolicy="strict-origin-when-cross-origin" 
-          style={{ 
-            position: "absolute", 
-            top: "50%", 
-            left: "50%", 
-            width: "100vw", 
+          src="https://player.vimeo.com/video/1140933123?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1&amp;background=1&amp;controls=0"
+          frameBorder="0"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100vw",
             height: "56.25vw",
             minHeight: "100vh",
             minWidth: "177.78vh",
@@ -190,48 +224,21 @@ export default function Home() {
           title="background"
         />
       </div>
-      <div className="absolute inset-0 z-0 bg-black/50" />
+      <div className="absolute inset-0 z-0 bg-black/60" />
 
       <SoundToggle vimeoPlayerRef={vimeoPlayerRef} />
 
-      <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-3 transition-opacity duration-700 md:px-6 ${isLoaded ? "opacity-100" : "opacity-0"
-          }`}
-      >
-        <button
-          onClick={() => scrollToSection(0)}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground/15 backdrop-blur-md transition-all duration-300 hover:bg-foreground/25">
-            <img src="/logo.png" alt="nordix" />
-          </div>
-        </button>
-
-        <div className="hidden md:flex items-center gap-6">
-          {["HOME", "WORK", "ABOUT", "CONTACT"].map((item, index) => (
-            <button
-              key={item}
-              onClick={() => scrollToSection(index)}
-              className={`group relative font-sans text-sm font-medium transition-colors ${currentSection === index
-                  ? "text-foreground"
-                  : "text-foreground/80 hover:text-foreground"
-                }`}
-            >
-              {item}
-              <span
-                className={`absolute -bottom-1 left-0 h-px bg-foreground transition-all duration-300 ${currentSection === index ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-              />
-            </button>
-          ))}
-        </div>
-
-        <img
-          src="/me.jpg"
-          alt="profile"
-          className="h-9 w-9 rounded-full object-cover border border-foreground/20 md:hidden"
+      {/* Header Component */}
+      <div className={`transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
+        <Header
+          currentSection={sectionIds[currentSection]}
+          onSectionClick={handleSectionClick}
+          scrollDirection={scrollDirection}
+          isMobile={isMobile}
+          onAiModalOpenChange={setIsAiModalOpen}
         />
-      </nav>
+      </div>
+
 
       <div
         ref={scrollContainerRef}
@@ -251,16 +258,30 @@ export default function Home() {
                 <span className="font-semibold">ELMHASSANI</span>
               </span>
             </h1>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 gap-4 duration-1000 delay-300 flex-row sm:items-center">
-              <MagneticButton
-                size="lg"
-                variant="primary"
-                onClick={() => window.open("#", "_blank")}
+            <div className="flex animate-in fade-in slide-in-from-top-4 gap-4 duration-1000 delay-300 flex-row sm:items-center">
+              <HoverLinkPreview
+                href="/ELMHASSANI RESUME.pdf"
+                previewImage="/resumeimage.png"
+                download
+                position="top"
+                isMobile={isMobile}
               >
-                Resume
-              </MagneticButton>
-              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(2)}>
-                GitHub
+                <MagneticButton
+                  size="lg"
+                  variant="primary"
+                  as="span"
+                >
+                  <span className="flex items-center gap-2">
+                    Resume
+                    <Download className="h-4 w-4" />
+                  </span>
+                </MagneticButton>
+              </HoverLinkPreview>
+              <MagneticButton size="lg" variant="secondary" onClick={() => window.open("https://github.com/nordixdotma", "_blank")}>
+                <span className="flex items-center gap-2">
+                  GitHub
+                  <Github className="h-4 w-4" />
+                </span>
               </MagneticButton>
             </div>
           </div>
@@ -268,8 +289,10 @@ export default function Home() {
 
         <WorkSection />
         <AboutSection scrollToSection={scrollToSection} />
-        <ContactSection />
+        <ContactSection isMobile={isMobile} />
       </div>
+
+      {isLoading && <Loader onComplete={handleLoaderComplete} />}
 
       <style jsx global>{`
         div::-webkit-scrollbar {

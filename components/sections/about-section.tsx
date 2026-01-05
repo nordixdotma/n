@@ -74,8 +74,8 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
               const revealClass = isVisible
                 ? "translate-x-0 opacity-100"
                 : i % 2 === 0
-                ? "-translate-x-8 opacity-0" // slightly left for even items
-                : "translate-x-16 opacity-0"
+                  ? "-translate-x-8 opacity-0" // slightly left for even items
+                  : "translate-x-16 opacity-0"
 
               // Move only the Backend card slightly to the left (not all the way)
               const isBackend = i === 1

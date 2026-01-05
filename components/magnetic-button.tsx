@@ -9,6 +9,7 @@ interface MagneticButtonProps {
   variant?: "primary" | "secondary" | "ghost"
   size?: "default" | "lg"
   onClick?: () => void
+  as?: React.ElementType
 }
 
 export function MagneticButton({
@@ -17,8 +18,9 @@ export function MagneticButton({
   variant = "primary",
   size = "default",
   onClick,
+  as: Component = "button",
 }: MagneticButtonProps) {
-  const ref = useRef<HTMLButtonElement>(null)
+  const ref = useRef<any>(null)
   const positionRef = useRef({ x: 0, y: 0 })
   const rafRef = useRef<number>()
 
@@ -65,22 +67,23 @@ export function MagneticButton({
   }
 
   return (
-    <button
-      type="button"
+    <Component
+      type={Component === "button" ? "button" : undefined}
       ref={ref}
       onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`
         relative overflow-hidden rounded-full font-medium
+        inline-flex items-center justify-center
         transition-all duration-300 ease-out will-change-transform
-        magnetic-button
+        magnetic-button cursor-pointer
         ${variants[variant]}
         ${sizes[size]}
         ${className}
       `}
     >
       <span className="relative z-10">{children}</span>
-    </button>
+    </Component>
   )
 }

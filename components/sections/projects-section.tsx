@@ -47,13 +47,12 @@ export function WorkSection() {
   return (
     <section
       ref={ref}
-      className="flex w-screen shrink-0 snap-start items-center px-6 pt-10 md:px-12 md:pt-0"
+      className="flex w-screen shrink-0 snap-start items-center px-6 pt-10 md:px-12 md:pt-0 "
     >
       <div className="mx-auto w-full max-w-7xl">
         <div
-          className={`mb-12 transition-all duration-700 md:mb-16 ${
-            isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
-          }`}
+          className={`mb-12 transition-all duration-700 md:mb-16 ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"
+            }`}
         >
           <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl">
             Projects
