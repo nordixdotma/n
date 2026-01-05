@@ -1,6 +1,9 @@
 "use client"
 
-import { useReveal } from "@/hooks/use-reveal"
+import { memo } from "react"
+import { motion } from "framer-motion"
+import { useInView } from "react-intersection-observer"
+import { cn } from "@/lib/utils"
 
 const frontendSkills = [
   "react",
@@ -29,36 +32,71 @@ const toolsSkills = [
   "mysql",
 ]
 
-export function AboutSection({ scrollToSection }: { scrollToSection?: (index: number) => void }) {
-  const { ref, isVisible } = useReveal(0.3)
+interface AboutSectionProps {
+  scrollToSection?: (index: number) => void
+  isMobile: boolean
+}
+
+function AboutSectionComponent({ isMobile }: AboutSectionProps) {
+  const { ref: aboutRef, inView: aboutInView } = useInView({
+    triggerOnce: false,
+    threshold: 0.2,
+  })
+
   const categories = [
     { label: "Frontend", skills: frontendSkills },
     { label: "Backend", skills: backendSkills },
     { label: "Tools & Databases", skills: toolsSkills },
   ]
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  } as const
+
   return (
     <section
-      ref={ref}
-      className="flex h-svh w-screen shrink-0 snap-start items-center px-4 pt-10 md:px-12 md:pt-0"
+      id="about"
+      ref={aboutRef}
+      className={cn(
+        "w-screen shrink-0 snap-start relative overflow-hidden flex items-center",
+        isMobile ? "min-h-svh py-20" : "h-svh"
+      )}
     >
-      <div className="mx-auto w-full max-w-7xl">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-12">
+      <div className="container px-6 md:px-12 mx-auto relative z-10 w-full max-w-7xl">
+        <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
           {/* Left side - Story */}
-          <div>
-            <div
-              className={`mb-6 transition-all duration-700 md:mb-12 ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0"}`}
-            >
+          <motion.div
+            initial={{ opacity: 0, x: isMobile ? 0 : -50, y: isMobile ? -30 : 0 }}
+            animate={aboutInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: isMobile ? 0 : -50, y: isMobile ? -30 : 0 }}
+            transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
+            className={cn(
+              "flex flex-col space-y-0 w-full",
+              isMobile ? "text-left mb-6" : "items-start text-left"
+            )}
+          >
+            <div className="mb-6 md:mb-12">
               <h2 className="mb-2 font-sans text-4xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
                 About
               </h2>
               <p className="font-mono text-xs text-foreground/60 md:text-sm">/ Who I Am</p>
             </div>
 
-            <div
-              className={`space-y-3 transition-all duration-700 md:space-y-4 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
-              style={{ transitionDelay: "200ms" }}
-            >
+            <div className="space-y-3 md:space-y-4">
               <p className="max-w-md text-sm leading-relaxed text-foreground/90 md:text-lg">
                 I'm a software engineer who loves solving real-world problems with code that works. I build fast, reliable, and useful web apps.
               </p>
@@ -66,28 +104,26 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
                 I've worked with React, C, and more, delivering projects like e-commerce platforms and sustainable product showcases. Clean solutions, no fluff.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right side - Categories */}
-          <div className="flex flex-col justify-center space-y-6 md:space-y-12">
+          <motion.div 
+            className="flex flex-col justify-center space-y-6 md:space-y-12"
+            variants={containerVariants}
+            initial="hidden"
+            animate={aboutInView ? "visible" : "hidden"}
+          >
             {categories.map((category, i) => {
-              const revealClass = isVisible
-                ? "translate-x-0 opacity-100"
-                : i % 2 === 0
-                  ? "-translate-x-8 opacity-0" // slightly left for even items
-                  : "translate-x-16 opacity-0"
-
-              // Move only the Backend card slightly to the left (not all the way)
               const isBackend = i === 1
               const marginLeft = isBackend ? "18%" : i % 2 === 0 ? "0" : "auto"
               const maxWidth = isBackend ? "82%" : i % 2 === 0 ? "100%" : "85%"
 
               return (
-                <div
+                <motion.div
                   key={i}
-                  className={`flex flex-col gap-2 border-l border-foreground/30 pl-4 transition-all duration-700 md:pl-8 ${revealClass}`}
+                  variants={itemVariants}
+                  className="flex flex-col gap-2 border-l border-foreground/30 pl-4 md:pl-8"
                   style={{
-                    transitionDelay: `${300 + i * 150}ms`,
                     marginLeft,
                     maxWidth,
                   }}
@@ -104,12 +140,14 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
                       />
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
   )
 }
+
+export const AboutSection = memo(AboutSectionComponent)

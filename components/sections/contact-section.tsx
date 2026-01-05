@@ -68,6 +68,7 @@ const containerVariants = {
   },
 };
 
+
 function ContactSectionComponent({ isMobile }: ContactSectionProps) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
@@ -105,18 +106,18 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
           transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
           viewport={{ once: true }}
           className={cn(
-            "flex flex-col space-y-4 w-full",
-            isMobile ? "items-center text-center mb-10" : "items-start text-left"
+            "flex flex-col space-y-0 w-full",
+            isMobile ? "text-left mb-6" : "items-start text-left"
           )}
         >
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-            <h2 className="text-5xl font-light tracking-tighter sm:text-6xl md:text-7xl mb-1 text-white">Let’s Talk</h2>
+            <h2 className="text-4xl font-light tracking-tight sm:text-5xl md:text-6xl lg:text-7xl mb-2 text-white">Let’s Talk</h2>
           </motion.div>
 
           <motion.p
             className={cn(
-              "text-sm sm:text-base mt-0! text-white/50 font-mono",
-              isMobile ? "max-w-xs mx-auto" : "max-w-md"
+              "font-mono text-xs md:text-sm mt-0! text-white/50",
+              isMobile ? "max-w-xs" : "max-w-md"
             )}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -277,7 +277,12 @@ export default function Home() {
                   </span>
                 </MagneticButton>
               </HoverLinkPreview>
-              <MagneticButton size={isMobile ? "default" : "lg"} variant="secondary" onClick={() => window.open("https://github.com/nordixdotma", "_blank")}>
+              <MagneticButton 
+                size={isMobile ? "default" : "lg"} 
+                variant="secondary" 
+                as="span"
+                onClick={() => window.open("https://github.com/nordixdotma", "_blank")}
+              >
                 <span className="flex items-center gap-2">
                   GitHub
                   <Github className="h-4 w-4" />
@@ -288,7 +293,7 @@ export default function Home() {
         </section>
 
         <WorkSection />
-        <AboutSection scrollToSection={scrollToSection} />
+        <AboutSection scrollToSection={scrollToSection} isMobile={isMobile} />
         <ContactSection isMobile={isMobile} />
       </div>
 

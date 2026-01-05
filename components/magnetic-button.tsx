@@ -3,13 +3,12 @@
 import type React from "react"
 import { useRef } from "react"
 
-interface MagneticButtonProps {
+interface MagneticButtonProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode
-  className?: string
   variant?: "primary" | "secondary" | "ghost"
   size?: "default" | "lg"
-  onClick?: () => void
   as?: React.ElementType
+  type?: "button" | "submit" | "reset"
 }
 
 export function MagneticButton({
@@ -19,6 +18,7 @@ export function MagneticButton({
   size = "default",
   onClick,
   as: Component = "button",
+  ...props
 }: MagneticButtonProps) {
   const ref = useRef<any>(null)
   const positionRef = useRef({ x: 0, y: 0 })
@@ -55,10 +55,10 @@ export function MagneticButton({
 
   const variants = {
     primary:
-      "bg-foreground/95 text-background hover:bg-foreground backdrop-blur-md hover:scale-[1.02] active:scale-[0.98]",
+      "bg-foreground/95 text-background hover:bg-foreground backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] border border-transparent",
     secondary:
       "bg-foreground/5 text-foreground hover:bg-foreground/10 backdrop-blur-xl border border-foreground/10 hover:border-foreground/20",
-    ghost: "bg-transparent text-foreground hover:bg-foreground/5 backdrop-blur-sm",
+    ghost: "bg-transparent text-foreground hover:bg-foreground/5 backdrop-blur-sm border border-transparent",
   }
 
   const sizes = {
@@ -68,9 +68,10 @@ export function MagneticButton({
 
   return (
     <Component
-      type={Component === "button" ? "button" : undefined}
+      type={Component === "button" ? (props.type || "button") : undefined}
       ref={ref}
       onClick={onClick}
+      {...props}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`

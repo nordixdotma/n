@@ -93,7 +93,7 @@ const HoverLinkPreview: React.FC<HoverLinkPreviewProps> = ({
         href={Component === "a" ? href : undefined}
         target={Component === "a" && newTab ? "_blank" : undefined}
         rel={Component === "a" && newTab ? "noopener noreferrer" : undefined}
-        className={cn("relative inline-block cursor-pointer no-underline text-inherit", className)}
+        className={cn("relative inline-flex items-center cursor-pointer no-underline text-inherit", className)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
