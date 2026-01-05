@@ -89,7 +89,7 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
       id="contact"
       className={cn(
         "w-screen shrink-0 snap-start relative overflow-hidden flex items-center",
-        isMobile ? "min-h-screen py-20" : "h-screen"
+        isMobile ? "min-h-svh py-20" : "h-svh"
       )}
     >
       <div

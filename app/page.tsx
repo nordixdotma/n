@@ -25,7 +25,7 @@ export default function Home() {
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
   const vimeoPlayerRef = useRef<any>(null)
-  const scrollThrottleRef = useRef<number>()
+  const scrollThrottleRef = useRef<number | undefined>(undefined)
   const lastSection = useRef(0)
 
   useEffect(() => {
@@ -201,7 +201,7 @@ export default function Home() {
   }, [currentSection])
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-background">
+    <main className="relative h-svh w-full overflow-hidden bg-background">
       <div
         className={`fixed inset-0 z-0 overflow-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       >
@@ -217,7 +217,7 @@ export default function Home() {
             left: "50%",
             width: "100vw",
             height: "56.25vw",
-            minHeight: "100vh",
+            minHeight: "100svh",
             minWidth: "177.78vh",
             transform: "translate(-50%, -50%)"
           }}
@@ -243,13 +243,13 @@ export default function Home() {
       <div
         ref={scrollContainerRef}
         data-scroll-container
-        className={`no-scrollbar relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"
+        className={`no-scrollbar relative z-10 flex h-svh overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"
           }`}
       >
-        <section className="flex min-h-screen w-screen shrink-0 flex-col justify-center px-6 md:px-12">
+        <section className="flex min-h-svh w-screen shrink-0 flex-col justify-center px-6 md:px-12">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-4 py-1.5 backdrop-blur-md duration-700">
-              <p className="font-mono text-xs text-foreground/90">SOFTWARE DEVELOPER</p>
+            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-3 py-1 md:px-4 md:py-1.5 backdrop-blur-md duration-700">
+              <p className="font-mono text-[10px] md:text-xs text-foreground/90">SOFTWARE DEVELOPER</p>
             </div>
             <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl">
               <span className="text-balance">
@@ -267,7 +267,7 @@ export default function Home() {
                 isMobile={isMobile}
               >
                 <MagneticButton
-                  size="lg"
+                  size={isMobile ? "default" : "lg"}
                   variant="primary"
                   as="span"
                 >
@@ -277,7 +277,7 @@ export default function Home() {
                   </span>
                 </MagneticButton>
               </HoverLinkPreview>
-              <MagneticButton size="lg" variant="secondary" onClick={() => window.open("https://github.com/nordixdotma", "_blank")}>
+              <MagneticButton size={isMobile ? "default" : "lg"} variant="secondary" onClick={() => window.open("https://github.com/nordixdotma", "_blank")}>
                 <span className="flex items-center gap-2">
                   GitHub
                   <Github className="h-4 w-4" />
