@@ -78,7 +78,7 @@ function AboutSectionComponent({ isMobile }: AboutSectionProps) {
       )}
     >
       <div className="container px-6 md:px-12 mx-auto relative z-10 w-full max-w-7xl">
-        <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
+        <div className="grid gap-6 md:gap-8 lg:gap-12 md:grid-cols-2">
           {/* Left side - Story */}
           <motion.div
             initial={{ opacity: 0, x: isMobile ? 0 : -50, y: isMobile ? -30 : 0 }}
@@ -86,7 +86,7 @@ function AboutSectionComponent({ isMobile }: AboutSectionProps) {
             transition={{ duration: 0.7, type: "spring", stiffness: 50 }}
             className={cn(
               "flex flex-col space-y-0 w-full",
-              isMobile ? "text-left mb-6" : "items-start text-left"
+              isMobile ? "text-left mb-0" : "items-start text-left"
             )}
           >
             <div className="mb-6 md:mb-12">
