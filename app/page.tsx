@@ -105,7 +105,7 @@ export default function Home() {
       const deltaX = touchStartX.current - touchEndX
 
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
-        if (deltaY > 0 && currentSection < 4) {
+        if (deltaY > 0 && currentSection < sectionIds.length - 1) {
           scrollToSection(currentSection + 1)
         } else if (deltaY < 0 && currentSection > 0) {
           scrollToSection(currentSection - 1)
@@ -142,7 +142,7 @@ export default function Home() {
         })
 
         const sectionWidth = scrollContainerRef.current.offsetWidth
-        const newSection = Math.round(scrollContainerRef.current.scrollLeft / sectionWidth)
+        const newSection = Math.max(0, Math.min(sectionIds.length - 1, Math.round(scrollContainerRef.current.scrollLeft / sectionWidth)))
         if (newSection !== currentSection) {
           setScrollDirection(newSection > currentSection ? "down" : "up")
           setCurrentSection(newSection)
@@ -176,7 +176,7 @@ export default function Home() {
         const scrollLeft = scrollContainerRef.current.scrollLeft
         const newSection = Math.round(scrollLeft / sectionWidth)
 
-        if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
+        if (newSection !== currentSection && newSection >= 0 && newSection < sectionIds.length) {
           setScrollDirection(newSection > currentSection ? "down" : "up")
           setCurrentSection(newSection)
         }
@@ -248,7 +248,7 @@ export default function Home() {
       >
         <section className="flex min-h-svh w-screen shrink-0 flex-col justify-center px-6 md:px-12">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-3 py-1 md:px-4 md:py-1.5 backdrop-blur-md duration-700">
+            <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-3 py-1 md:px-4 md:py-1.5 duration-700">
               <p className="font-mono text-[10px] md:text-xs text-foreground/90">SOFTWARE DEVELOPER</p>
             </div>
             <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-6xl lg:text-7xl">
