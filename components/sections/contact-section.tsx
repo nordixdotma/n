@@ -139,11 +139,12 @@ function ContactSectionComponent({ isMobile }: ContactSectionProps) {
                 <motion.div
                   key={i}
                   variants={{
-                    hidden: { x: i % 2 === 0 ? -20 : 20, y: i % 3 === 0 ? -10 : 0 },
+                    hidden: { opacity: 0, x: i % 2 === 0 ? -20 : 20, y: i % 3 === 0 ? -10 : 0 },
                     visible: {
+                      opacity: 1,
                       x: 0,
                       y: 0,
-                      transition: { type: "spring", stiffness: 100, damping: 15 },
+                      transition: { type: "spring", stiffness: 80, damping: 15 },
                     },
                   }}
                   className="touch-manipulation relative"

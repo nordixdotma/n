@@ -238,12 +238,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="p-0 overflow-y-auto max-h-[70vh] w-[95vw] sm:w-[85vw] md:w-[70vw] lg:w-[50vw] max-w-2xl gap-0 border border-neutral-800 bg-black text-white rounded-sm shadow-2xl"
+        className="p-0 overflow-y-auto overflow-x-hidden max-h-[70vh] w-[95vw] sm:w-[85vw] md:w-[70vw] lg:w-[50vw] max-w-2xl gap-0 border border-neutral-800 bg-black text-white rounded-sm shadow-2xl"
         onScroll={handleScroll}
         showCloseButton={false}
       >
         <DialogTitle className="sr-only">Profile Details</DialogTitle>
-        <div className="w-full pb-4 md:pb-0 relative min-h-[400px]">
+        <div className="w-full pb-4 md:pb-0 relative min-h-[400px] overflow-x-hidden">
           {/* Sticky Header - Transparent initially, Black on scroll */}
           <div 
             className={`sticky top-0 z-20 flex items-center gap-3 px-3 py-1.5 transition-colors duration-200 border-b ${
