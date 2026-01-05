@@ -292,7 +292,7 @@ export default function Home() {
           </div>
         </section>
 
-        <WorkSection />
+        <WorkSection isMobile={isMobile} />
         <AboutSection scrollToSection={scrollToSection} isMobile={isMobile} />
         <ContactSection isMobile={isMobile} />
       </div>
