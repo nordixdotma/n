@@ -43,15 +43,15 @@ const inputWidthClasses: Record<WindowSize, string> = {
 };
 
 const textSizeClasses: Record<WindowSize, string> = {
-  normal: "text-md",
+  normal: "text-sm",
   expanded: "text-md",
-  minimized: "text-base",
+  minimized: "text-xs",
 };
 
 const SUGGESTED_QUESTIONS = [
-  "What services do you offer?",
-  "Tell me about your experience",
-  "How can I reach you?",
+  "What projects have you built?",
+  "What's your tech stack?",
+  "How can I hire you?",
 ];
 
 const headingSizeClasses: Record<WindowSize, string> = {
@@ -86,27 +86,137 @@ function TypingText({ text, onComplete, speed = 25 }: TypingTextProps) {
   return <>{formatBotMessage(visibleText)}</>;
 }
 
-/* Format bot message: lines ending with colon become bold titles */
+/* Format bot message: links become clickable, titles become bold */
 function formatBotMessage(content: string) {
   const lines = content.split("\n");
+  
+  // Function to parse and linkify text
+  const linkifyText = (text: string, lineKey: string) => {
+    // Combined pattern to match:
+    // 1. Full URLs with http/https
+    // 2. Domain-style URLs (github.com/..., linkedin.com/..., etc.)
+    // 3. Email addresses
+    const combinedPattern = /(https?:\/\/[^\s]+)|([a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}(?:\/[^\s]*)?)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+    
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+    let partIndex = 0;
+    
+    while ((match = combinedPattern.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+      
+      const matchedText = match[0];
+      
+      if (match[1]) {
+        // Full URL with http/https
+        parts.push(
+          <a
+            key={`${lineKey}-link-${partIndex}`}
+            href={matchedText}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline underline-offset-2 cursor-pointer transition-colors"
+          >
+            {matchedText}
+          </a>
+        );
+      } else if (match[2]) {
+        // Domain-style URL without http
+        parts.push(
+          <a
+            key={`${lineKey}-domain-${partIndex}`}
+            href={`https://${matchedText}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline underline-offset-2 cursor-pointer transition-colors"
+          >
+            {matchedText}
+          </a>
+        );
+      } else if (match[3]) {
+        // Email
+        parts.push(
+          <a
+            key={`${lineKey}-email-${partIndex}`}
+            href={`mailto:${matchedText}`}
+            className="text-blue-400 hover:text-blue-300 underline underline-offset-2 cursor-pointer transition-colors"
+          >
+            {matchedText}
+          </a>
+        );
+      }
+      
+      lastIndex = match.index + matchedText.length;
+      partIndex++;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : text;
+  };
   
   return lines.map((line, index) => {
     const trimmedLine = line.trim();
     
-    // Check if line is a title (ends with colon or is all caps with colon)
+    // Check if line is a title (ends with colon and is short)
     const isTitle = trimmedLine.endsWith(":") && trimmedLine.length < 60;
+    
+    // Check if line starts with bullet point or number (subtitle/list item)
+    const isBulletPoint = /^[-•*]\s/.test(trimmedLine);
+    const isNumberedList = /^\d+[.)]\s/.test(trimmedLine);
+    
+    // Check if line contains a label pattern like "Label: value"
+    const labelMatch = trimmedLine.match(/^([^:]+):\s*(.+)$/);
+    const isLabelValue = labelMatch && labelMatch[1].length < 30 && !trimmedLine.startsWith("http");
     
     if (!trimmedLine) {
       return <br key={index} />;
     }
     
+    const lineKey = `line-${index}`;
+    
+    // Title formatting (bold, slightly larger)
+    if (isTitle) {
+      return (
+        <span key={lineKey} className="block mt-3 first:mt-0">
+          <strong className="font-semibold text-neutral-50">{trimmedLine}</strong>
+          {index < lines.length - 1 && <br />}
+        </span>
+      );
+    }
+    
+    // Label: Value formatting (bold label)
+    if (isLabelValue && labelMatch) {
+      return (
+        <span key={lineKey}>
+          <strong className="font-medium text-neutral-200">{labelMatch[1]}:</strong>{" "}
+          <span>{linkifyText(labelMatch[2], lineKey)}</span>
+          {index < lines.length - 1 && <br />}
+        </span>
+      );
+    }
+    
+    // Bullet point formatting
+    if (isBulletPoint || isNumberedList) {
+      return (
+        <span key={lineKey} className="block pl-2">
+          {linkifyText(trimmedLine, lineKey)}
+          {index < lines.length - 1 && <br />}
+        </span>
+      );
+    }
+    
+    // Regular text with linkification
     return (
-      <span key={index}>
-        {isTitle ? (
-          <strong className="font-semibold">{trimmedLine}</strong>
-        ) : (
-          trimmedLine
-        )}
+      <span key={lineKey}>
+        {linkifyText(trimmedLine, lineKey)}
         {index < lines.length - 1 && <br />}
       </span>
     );
@@ -119,7 +229,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
     {
       id: 1,
       type: "bot",
-      content: "Hi there! I'm your AI assistant. How can I help you today?",
+      content: "Hey! I'm Nordix, Noureddine's AI assistant. I can tell you about his projects, skills, or help you get in touch. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -275,6 +385,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
       <DialogContent
         className={cn(
           "bg-black! border-none! outline-none! text-white p-0 gap-0 overflow-hidden transition-all duration-300 ease-in-out [&>button]:hidden shadow-2xl flex flex-col rounded-[6px]",
+          "scheme-dark",
           sizeClasses[windowSize]
         )}
       >
@@ -330,7 +441,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                     layoutId="chat-title"
                     className={cn("font-semibold text-white mb-8 text-center", headingSizeClasses[windowSize])}
                   >
-                    Hi there! I'm your AI assistant. <br className="hidden sm:block" /> How can I help you today?
+                    Hey! I'm Nordix 👋 <br className="hidden sm:block" /> Ask me about Noureddine's work
                   </motion.h3>
                   
                   {/* Modern Input Container */}
@@ -367,7 +478,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}
                           className={cn(
-                            "w-9 h-9 flex items-center justify-center transition-colors shrink-0 rounded-full",
+                            "w-9 h-9 flex items-center justify-center transition-colors shrink-0 rounded-full cursor-pointer",
                             isRecording ? "bg-red-500 text-white animate-pulse" : "text-neutral-500 hover:text-neutral-300"
                           )}
                           aria-label={isRecording ? "Stop recording" : "Start recording"}
@@ -441,7 +552,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                           // but the user might prefer auto-send. 
                           // Let's keep it interactive.
                         }}
-                        className="px-4 py-2 rounded-full border border-neutral-800 text-neutral-400 text-sm hover:border-neutral-600 hover:text-white transition-all bg-neutral-900/50"
+                        className="px-4 py-2 rounded-full border border-neutral-800 text-neutral-400 text-sm hover:border-neutral-600 hover:text-white transition-all bg-neutral-900/50 cursor-pointer"
                       >
                         {question}
                       </motion.button>
@@ -452,7 +563,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
           ) : (
             /* Chat messages state */
             <div
-              className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-500 scrollbar-track-transparent hover:scrollbar-thumb-neutral-400"
+              className="flex-1 overflow-y-auto ai-chat-scrollbar"
               ref={scrollRef}
             >
               <div className="flex flex-col pb-4">
@@ -470,7 +581,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                         {message.type === "user" ? (
                           <div className="bg-[#303030] px-5 py-2.5 rounded-3xl text-[#ececec]">{message.content}</div>
                         ) : (
-                          <div className="text-[#ececec] pt-1">
+                          <div className="text-neutral-200 pt-1">
                             {message.isNew ? (
                               <TypingText
                                 text={message.content}
@@ -516,7 +627,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-2 shrink-0 bg-linear-to-t from-black via-black to-transparent"
+              className="px-4 py-1 shrink-0 bg-linear-to-t from-black via-black to-transparent"
             >
               <div className={cn("mx-auto", contentWidthClasses[windowSize])}>
                 <motion.div 
@@ -551,7 +662,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       className={cn(
-                        "w-9 h-9 flex items-center justify-center transition-colors shrink-0 rounded-full",
+                        "w-9 h-9 flex items-center justify-center transition-colors shrink-0 rounded-full cursor-pointer",
                         isRecording ? "bg-red-500 text-white animate-pulse" : "text-neutral-500 hover:text-neutral-300"
                       )}
                       aria-label={isRecording ? "Stop recording" : "Start recording"}
@@ -611,7 +722,7 @@ function AiAssistantModalComponent({ open, onOpenChange }: AiAssistantModalProps
                   </div>
                 </motion.div>
 
-                <div className="text-center mt-3">
+                <div className="text-center mt-1">
                   <p className="text-[11px] text-neutral-600">Nordix can make mistakes. Check important info.</p>
                 </div>
               </div>
